@@ -5,8 +5,9 @@ const  express =  require('express')
  const app = express();
 
  app.use(bodyParser.json());
-
+ const events=[]
  app.post('/events', async (req, res) => {
+  events.push(event); 
      const event = req.body
       try{
         await axios.post('http://localhost:4000/events', event)
@@ -20,7 +21,9 @@ const  express =  require('express')
   
       res.status(200).send({status: 'success'});
  })
-
+app.get('/events', function(req, res){
+res.send(events)
+});
  app.listen(4005, () => {
      console.log('Listening on port 4005');
  })
