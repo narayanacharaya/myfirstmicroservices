@@ -1,39 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+const axios = require('axios');
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
 const posts = {};
- const handelEvent=()=>{type,data}
- if (type === 'PostCreated') {
-  const { id, title } = data;
+const handelEvent = (type, data) => {
+  if (type === 'PostCreated') {
+    const { id, title } = data;
+    posts[id] = { id, title, comments: [] };
+  }
 
-  posts[id] = { id, title, comments: [] };
-}
+  if (type === 'CommentCreated') {
+    const { id, content, postId, status } = data;
+    const post = posts[postId];
+    post.comments.push({ id, content, status });
+  }
 
-if (type == 'CommentCreated') {
-  const { id, content, postid , status } = data;
-
-
-  const post = posts[postid];
-  post.comments.push({ id, content,status });
-}
-if (type == 'CommentUpdated') {
-  const { id, content, postId , status } = req.body.data;
-console.log(req.body.data);
-
-  const post = posts[postId];
- const comment= post.comments.find(c => c.id ===id)
- comment.status = status;
- console.log("sucesffuly updated the cmt ")
-;
-
-
-}
-;
+  if (type === 'CommentUpdated') {
+    const { id, status } = data;
+    const postId = data.postId; // Assuming postId is present in the data
+    const post = posts[postId];
+    const comment = post.comments.find(c => c.id === id);
+    if (comment) {
+      comment.status = status;
+      console.log("Successfully updated the comment.");
+    } else {
+      console.log("Comment not found.");
+    }
+  }
+};
 
 app.get('/posts', (req, res) => {
   const {type,data}=req.body; 
@@ -52,8 +50,9 @@ app.post('/events', (req, res) => {
 
 app.listen(4002, async () => {
   console.log('Listening on 4002');
-   const res= await axios.get('http://localhost: 4005/events'
-);for(let event of res.data){
+   const res= await axios.get('http://localhost:4005/events'
+);
+for(let event of res.data){
   handelEvent(event.type,event.data)
 }
 });
