@@ -14,7 +14,7 @@ app.post('/events', async (req, res) => {
 
     try {
         console.log("my post id is ",data.postid)
-      await axios.post('http://localhost:4005/events', {
+      await axios.post('http://event-bus-srv:4005/events', {
         type: 'CommentModerated', // Corrected typo here
         data: {
           id: data.id,

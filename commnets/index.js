@@ -40,7 +40,7 @@ catch (err) { console.log(err) };
     ());
       console.log("updated  status is ",status);
      //  comment.status= status;
-      await axios.post('http://localhost:4005/events', {
+      await axios.post('http://event-bus-srv:4005/events', {
         type:"CommentUpdated",
         data:{
           id,

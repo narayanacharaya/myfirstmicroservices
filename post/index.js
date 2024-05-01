@@ -11,17 +11,24 @@ app.use(bodyParser.json());
      res.send(post);
  })
  app.post('/posts', async (req, res) => {
-    const id = randomBytes(4).toString('hex');
-    const {title}=req.body;
-    post[id]={id,title};
-   await  axios.post('http://localhost:4005/events', {
-    type: 'PostCreated',
-    data:{
-        id,title
+    try {
+        const id = randomBytes(4).toString('hex');
+        const {title} = req.body;
+        post[id] = {id, title};
+        
+        // Send data to event bus
+        await axios.post('http://event-bus-srv:4005/events', {
+            type: 'PostCreated',
+            data: { id, title }
+        });
+
+        res.status(201).send(post[id]);
+    } catch (error) {
+        // Handle error
+        console.error('Error sending data to event bus:', error.message);
+        res.status(500).send({ error: 'Internal server error' });
     }
-   })
-     res.status(201).send(post)[id];
-})
+});
 
 
  app.post('/events', async (req, res) => {
